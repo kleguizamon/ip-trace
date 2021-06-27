@@ -9,10 +9,10 @@ export default class IpController {
 			try {
 				const trace = await this.apiService.ipTracking(ip);
 				console.log(trace);
-				const test1 = {
-					test: trace,
-				};
-				res.status(200).json(test1);
+				// const test1 = {
+				// 	test: trace,
+				// };
+				res.status(200).json(trace);
 			} catch (err) {
 				console.log(err);
 				res.status(500).json('error');

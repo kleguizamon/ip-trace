@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 const statsModel = new mongoose.Schema({
 	ISOcode: {
@@ -16,4 +16,4 @@ const statsModel = new mongoose.Schema({
 	},
 });
 
-export default moongose.model('Stat', statsModel);
+export default mongoose.model('Stat', statsModel);

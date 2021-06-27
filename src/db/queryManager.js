@@ -1,9 +1,9 @@
-import CountriesModel from '../model/countriesModel.js';
-import StatsModel from '../model/countriesModel.js';
+import CountryModel from '../model/countryModel.js'
+import StatsModel from '../model/statsModel.js';
 
 export default class QueryManager {
-	async getCountryInfo(countryCode) {
-		const query = await CountriesModel.find({ ISOcode: countryCode }).exec();
+	getCountryInfo(countryCode) {
+		const query = CountryModel.find({ ISOcode: countryCode }).exec();
 		return query;
 	}
 }

@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 
-const countriesModel = new mongoose.Schema({
+const countryModel = new mongoose.Schema({
 	ISOcode: {
 		type: String,
 		unique: true,
@@ -25,4 +25,4 @@ const countriesModel = new mongoose.Schema({
 	},
 });
 
-export default mongoose.model('Countries', countriesModel);
+export default mongoose.model('Countries', countryModel);

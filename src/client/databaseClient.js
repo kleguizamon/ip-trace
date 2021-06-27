@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 
 //Connect to local DB
-module.exports = async () => {
+export default async () => {
 	try {
 		await mongoose.connect('mongodb://localhost:27017/IpTrace', {
 			useNewUrlParser: true,
