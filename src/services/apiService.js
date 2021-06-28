@@ -1,4 +1,5 @@
 import urlsApi from '../client/urlsApi.js';
+import { getLanguage } from '../utils/buildResponse.js';
 import axios from 'axios';
 
 export default class ApiService {
@@ -8,82 +9,82 @@ export default class ApiService {
 	async ipTracking(ip) {
 		try {
 			const res = await axios.get(urlsApi.IP_TRACKING(ip));
-			const countryCode = res.data.countryCode3;
+			const countryCode = res.data.countryCode.toLowerCase();
 
 			//voy a buscar a la db con el codigo iso
 			const countryInfo = await this.dbClient.getCountryInfo(countryCode);
 			console.log('response db: ', countryInfo);
-			if (countryInfo) {
-				//traer datos de la db
+			if (countryInfo != '') {
+				console.log('voy a buscar datos a la db');
+				return countryInfo;
 			}
+			//Si no hay datos llamo a la api country
 			const resCountry = await axios.get(urlsApi.COUNTRY_INFO(countryCode));
-			const country = resCountry.data;
+			const { data } = resCountry;
 			const { name, nativeName, currencies, languages, timezones, latlng } =
-				country;
-			//currencies, timezones, latlng);
+				data;
+
+			//getCurrency
+			const getCurrency = currencies.map((currency) => {
+				return {
+					code: currency.code,
+					nameCurrency: currency.name,
+					symbol: currency.symbol,
+				};
+			});
+			const [{ code, nameCurrency, symbol }] = getCurrency;
 
 			//languages
 			const getLanguage = languages.map((languages) => {
 				return {
 					iso639_1: languages.iso639_1,
 					iso639_2: languages.iso639_2,
-					nativeName: languages.nativeName,
+					native: languages.nativeName,
 				};
-			});
-			// console.log('getLanguage:', ...getLanguage);
-			// const {...test } = getLanguage;
-			// console.log('test: ',test)
-			//latitud longitud
-			const getLatlng = latlng.map((latlng) => {
-				const latlngModel = {
-					latitude: latlng[0],
-					longitude: latlng[1],
-				};
-				return latlngModel;
 			});
 
+			// const response = await getLanguage(languages);
+			// console.log('response:', response);
+			const [{ iso639_1, iso639_2, native }] = getLanguage;
+
 			const countryModel = {
-				ISOcode: 'getLanguage.iso639_2',
+				ISOcode: countryCode,
+				currency: {
+					code,
+					nameCurrency,
+					symbol,
+				},
 				country: {
-					name: name,
+					name,
 					native: nativeName,
 				},
 				languages: [
 					{
-						nativeName: 'getLanguage.nativeName',
-						iso639_1: 'getLanguage.iso639_1',
+						nativeName: native,
+						iso639_1,
 					},
 				],
-				timezones: '',
+				timezones: 'timezone',
 				coordinates: {
-					latitude: getLatlng.latitude,
-					longitude: getLatlng.longitude,
-					distanceToBsAs: '',
+					latitude: latlng[0],
+					longitude: latlng[1],
+					distanceToBsAs: 1,
 				},
 			};
+
+			//llamo a la db para insertar el model
+			await this.dbClient.postCoutryInfo(countryModel);
+
+			//API CURRENCY
+			const resCurrency = await axios.get(urlsApi.CURRENCY_INFO(code));
+			const {rate} = Object.values(resCurrency.data)
+			console.log(rate);
+
+			//call buildResponse()
 
 			return countryModel;
 		} catch (err) {
 			console.log(err);
 		}
 	}
-
-	// async countryData(countryCode) {
-	// 	try {
-	// 		const res = await axios.get(urlsApi.COUNTRY_INFO(countryCode));
-	// 		const countryCode = res.countryCode3;
-
-	//       //voy a buscar a la db con el codigo iso
-	//       const countryInfo = await this.db.getCountryInfo(countryCode);
-
-	//       if (countryInfo) {
-	//          //
-	//       } else {
-	//          const
-	//       }
-
-	// 	} catch (err) {
-	// 		console.log(err);
-	// 	}
-	// }
 }

@@ -5,6 +5,11 @@ const countryModel = new mongoose.Schema({
 		type: String,
 		unique: true,
 	},
+	currency: {
+		code: String,
+		name: String,
+		symbol: String,
+	},
 	country: {
 		name: String,
 		native: String,
