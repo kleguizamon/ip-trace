@@ -1,5 +1,5 @@
 import urlsApi from '../client/urlsApi.js';
-import { getLanguage } from '../utils/buildResponse.js';
+import { getLanguage, getCurrency } from '../utils/buildResponse.js';
 import axios from 'axios';
 
 export default class ApiService {
@@ -24,28 +24,13 @@ export default class ApiService {
 			const { name, nativeName, currencies, languages, timezones, latlng } =
 				data;
 
-			//getCurrency
-			const getCurrency = currencies.map((currency) => {
-				return {
-					code: currency.code,
-					nameCurrency: currency.name,
-					symbol: currency.symbol,
-				};
-			});
-			const [{ code, nameCurrency, symbol }] = getCurrency;
-
-			//languages
-			const getLanguage = languages.map((languages) => {
-				return {
-					iso639_1: languages.iso639_1,
-					iso639_2: languages.iso639_2,
-					native: languages.nativeName,
-				};
-			});
-
-			// const response = await getLanguage(languages);
-			// console.log('response:', response);
-			const [{ iso639_1, iso639_2, native }] = getLanguage;
+			//call getCurrency()
+			const currencyInfo = await getCurrency(currencies);
+			const [{ code, nameCurrency, symbol }] = currencyInfo;
+			
+			//call getLanguage()
+			const resLenguage = await getLanguage(languages);
+			const [{ iso639_1, native }] = resLenguage;
 
 			const countryModel = {
 				ISOcode: countryCode,
@@ -73,12 +58,12 @@ export default class ApiService {
 			};
 
 			//llamo a la db para insertar el model
-			await this.dbClient.postCoutryInfo(countryModel);
+			//await this.dbClient.postCoutryInfo(countryModel);
 
 			//API CURRENCY
 			const resCurrency = await axios.get(urlsApi.CURRENCY_INFO(code));
-			const {rate} = Object.values(resCurrency.data)
-			console.log(rate);
+			const currencyRate = Object.values(resCurrency.data.rates);
+			console.log(currencyRate[0]); // value de la conversion a U$S
 
 			//call buildResponse()
 
