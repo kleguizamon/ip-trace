@@ -1,15 +1,44 @@
 import mongoose from 'mongoose';
 
-//Connect to local DB
-export default async () => {
-	try {
-		await mongoose.connect('mongodb://localhost:27017/IpTrace', {
-			useNewUrlParser: true,
-			useUnifiedTopology: true,
-		});
-	} catch (err) {
-		console.log('error al conectarse con mongo');
-	}
+export const buildCountryModel = (
+	countryCode,
+	code,
+	nameCurrency,
+	symbol,
+	name,
+	nativeName,
+	native,
+	iso639_1,
+	hourDifference,
+	latlng,
+	distanceToBsAs
+) => {
+	const countryModel = {
+		ISOcode: countryCode,
+		currency: {
+			code,
+			nameCurrency,
+			symbol,
+		},
+		country: {
+			name,
+			native: nativeName,
+		},
+		languages: [
+			{
+				nativeName: native,
+				iso639_1,
+			},
+		],
+		hourDifference,
+		coordinates: {
+			latitude: latlng[0],
+			longitude: latlng[1],
+			distanceToBsAs,
+		},
+	};
+
+	return countryModel;
 };
 
 //Connect to Atlas

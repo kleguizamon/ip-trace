@@ -20,7 +20,7 @@ const countryModel = new mongoose.Schema({
 			iso639_1: String,
 		},
 	],
-	timezones: {
+	hourDifference: {
 		type: String,
 	},
 	coordinates: {

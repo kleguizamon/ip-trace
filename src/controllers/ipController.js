@@ -7,11 +7,11 @@ export default class IpController {
 		const { ip } = req.body;
 		if (ip) {
 			try {
-				const trace = await this.apiService.ipTracking(ip);
-				console.log(trace);
-				// const test1 = {
-				// 	test: trace,
-				// };
+				const resIpTracking = await this.apiService.ipTracking(ip);
+				const trace = {
+					ip,
+					...resIpTracking,
+				};
 				res.status(200).json(trace);
 			} catch (err) {
 				console.log(err);

@@ -1,21 +1,25 @@
-export const getLanguage = (languages) => {
-	const languagesObj = languages.map((languages) => {
-		return {
-			iso639_1: languages.iso639_1,
-			iso639_2: languages.iso639_2,
-			native: languages.nativeName,
-		};
-	});
-	return languagesObj;
-};
+import { getTimeStamp } from '../utils/buildData.js';
 
-export const getCurrency = (currency) => {
-	const currencyObj = currency.map((currency) => {
-		return {
-			code: currency.code,
-			nameCurrency: currency.name,
-			symbol: currency.symbol,
-		};
-	});
-	return currencyObj;
+export const buildResponse = (
+	native,
+	name,
+	countryCode,
+	nativeName,
+	iso639_1,
+	conversionRate,
+	code,
+	hourDifference,
+	distanceToBsAs
+) => {
+	const timeStamp = getTimeStamp();
+	const traceResponse = {
+		date: timeStamp,
+		country: `${nativeName} (${name})`,
+		iso_code: `${countryCode}`,
+		languages: `[${native} (${iso639_1})]`,
+		currency: `${code} (1 EUR = ${conversionRate} U$S)`,
+		times: `[${hourDifference}]`,
+		estimated_distance: `${distanceToBsAs} kms`,
+	};
+	return traceResponse;
 };
